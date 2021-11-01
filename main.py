@@ -6,9 +6,9 @@ import re
 from datetime import date, datetime
 from pymongo import MongoClient
 
-cluster = MongoClient("mongodb://127.0.0.1:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false") #conexao com a minha base de dados MongoDB
-db = cluster["preco_ceasa"]
-collection = db["historico_precos"]
+# cluster = MongoClient("mongodb://127.0.0.1:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false") #conexao com a minha base de dados MongoDB
+# db = cluster["preco_ceasa"]
+# collection = db["historico_precos"]
 
 ##caminho da pasta com os dados no PC
 
@@ -20,18 +20,18 @@ collection = db["historico_precos"]
 
 
 def insertBanco(listaProdutos):
-    cont = 0
+    # cont = 0
     print(listaProdutos)
-    while cont < 5:
-        meusDados = {"data": listaProdutos[0][cont],
-                     "cultura": listaProdutos[1][cont],
-                     "status": listaProdutos[2][cont],
-                     "valor": listaProdutos[3][cont],
-                     "cidade": listaProdutos[4]}
-        # print(meusDados)
+    # while cont < 5:
+    #     meusDados = {"data": listaProdutos[0][cont],
+    #                  "cultura": listaProdutos[1][cont],
+    #                  "status": listaProdutos[2][cont],
+    #                  "valor": listaProdutos[3][cont],
+    #                  "cidade": listaProdutos[4]}
+    #     print(meusDados)
 
-        collection.insert_one(meusDados)
-        cont += 1
+        # collection.insert_one(meusDados)
+        # cont += 1
 
 def lerArquivo(pdf):
     dataClassificao = []
@@ -48,7 +48,7 @@ def lerArquivo(pdf):
     regexLondrina = re.findall(r'CeasaLondrina', pdf)
     regexMaringa = re.findall(r'CeasaMaringa', pdf)
     regexCascavel = re.findall(r'CeasaCascavel', pdf)
-    regexFozDoIguacu = re.findall(r'CeasaFozDoIguacu', pdf)
+    regexFozDoIguacu = re.findall(r'CeasaFozdoIguacu', pdf)
     cidade = ''
     if(regexCuritiba):
         cidade = regexCuritiba[0]
@@ -89,6 +89,7 @@ def lerArquivo(pdf):
     dataClassificao.append(dataTeste)
     dataClassificao.append(dataTeste)
 
+
     for token in lista:
         if token == 'abobrinha':
             pos = lista.index(token)
@@ -101,12 +102,12 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 11])
                     situacaoMercado.append(lista[pos + 23])
                     valor.append(lista[pos + 25])
-                if lista[pos+25] == '0,00':
+                if lista[pos+25] == '':
                     situacaoMercado.remove(lista[pos+23])
                     valor.remove(lista[pos+25])
                     situacaoMercado.append(lista[pos+37])
                     valor.append(lista[pos+39])
-                if lista[pos+39] == '0,00':
+                if lista[pos+39] == '':
                     situacaoMercado.remove(lista[pos+37])
                     valor.remove(lista[pos+39])
                     situacaoMercado.append(lista[pos+52])
@@ -149,11 +150,18 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 9])
                     situacaoMercado.append(lista[pos + 20])
                     valor.append(lista[pos + 22])
-                if lista[pos + 7] == 'aus':
-                    situacaoMercado.remove(lista[pos + 7])
-                    valor.remove(lista[pos + 9])
-                    situacaoMercado.append(lista[pos + 15])
-                    valor.append(lista[pos + 17])
+
+            if lista[pos + 7] == 'aus':
+                situacaoMercado.remove(lista[pos + 7])
+                valor.remove(lista[pos + 9])
+                situacaoMercado.append(lista[pos + 15])
+                valor.append(lista[pos + 17])
+                if lista[pos + 15] == 'kg':
+                    situacaoMercado.remove(lista[pos + 15])
+                    valor.remove(lista[pos + 17])
+                    situacaoMercado.append(lista[pos + 16])
+                    valor.append(lista[pos + 18])
+
 
             if lista[pos + 5] == 'kg':
                 situacaoMercado.append(lista[pos + 6])
@@ -207,6 +215,18 @@ def lerArquivo(pdf):
                     situacaoMercado.append(lista[pos + 20])
                     valor.append(lista[pos + 22])
 
+            if lista[pos + 7] == 'aus':
+                situacaoMercado.remove(lista[pos + 7])
+                valor.remove(lista[pos + 9])
+                situacaoMercado.append(lista[pos + 15])
+                valor.append(lista[pos + 17])
+                if lista[pos + 15] == 'kg':
+                    situacaoMercado.remove(lista[pos + 15])
+                    valor.remove(lista[pos + 17])
+                    situacaoMercado.append(lista[pos + 16])
+                    valor.append(lista[pos + 18])
+
+
 
     for token in lista:
         if token == 'tomate':
@@ -238,16 +258,29 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 66])
                     situacaoMercado.append(lista[pos + 68])
                     valor.append(lista[pos + 70])
+                    if lista[pos + 70] == 'longa':
+                        situacaoMercado.remove(lista[pos + 68])
+                        valor.remove(lista[pos + 70])
+                        situacaoMercado.append(lista[pos + 78])
+                        valor.append(lista[pos + 80])
                 if lista[pos + 64] == 'kg':
                     situacaoMercado.remove(lista[pos + 64])
                     valor.remove(lista[pos + 66])
                     situacaoMercado.append(lista[pos + 65])
                     valor.append(lista[pos + 67])
+                    if lista[pos + 67] == 'pr/sp':
+                        situacaoMercado.remove(lista[pos + 65])
+                        valor.remove(lista[pos + 67])
+                        situacaoMercado.append(lista[pos + 76])
+                        valor.append(lista[pos + 78])
                 if lista[pos + 64] == '22':
                     situacaoMercado.remove(lista[pos + 64])
                     valor.remove(lista[pos + 66])
                     situacaoMercado.append(lista[pos + 66])
                     valor.append(lista[pos + 68])
+                    if lista[pos + 66] == 'aus':
+                        valor.remove(lista[pos + 68])
+                        valor.append('0,00')
                 if lista[pos + 64] == 'pr/sp':
                     situacaoMercado.remove(lista[pos + 64])
                     valor.remove(lista[pos + 66])
@@ -258,6 +291,11 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 66])
                     situacaoMercado.append(lista[pos + 67])
                     valor.append(lista[pos + 69])
+                    if lista[pos + 69] == 'longa':
+                        situacaoMercado.remove(lista[pos + 67])
+                        valor.remove(lista[pos + 69])
+                        situacaoMercado.append(lista[pos + 77])
+                        valor.append(lista[pos + 79])
                 if lista[pos + 64] == 'local':
                     situacaoMercado.remove(lista[pos + 64])
                     valor.remove(lista[pos + 66])
@@ -283,6 +321,11 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 66])
                     situacaoMercado.append(lista[pos + 74])
                     valor.append(lista[pos + 76])
+                if lista[pos + 66] == 'vida':
+                    situacaoMercado.remove(lista[pos + 64])
+                    valor.remove(lista[pos + 66])
+                    situacaoMercado.append(lista[pos + 73])
+                    valor.append(lista[pos + 75])
             # print(lista[pos+64])
 
             if lista[pos +6] == '22':
@@ -326,11 +369,23 @@ def lerArquivo(pdf):
                     valor.remove(lista[pos + 9])
                     situacaoMercado.append(lista[pos + 20])
                     valor.append(lista[pos + 22])
-                if lista[pos + 7] == 'aus':
-                    situacaoMercado.remove(lista[pos + 7])
-                    valor.remove(lista[pos + 9])
-                    situacaoMercado.append(lista[pos + 15])
-                    valor.append(lista[pos + 17])
+                # if lista[pos + 9] == 'Macarrão':
+                #     situacaoMercado.remove(lista[pos + 7])
+                #     valor.remove(lista[pos + 9])
+                #     situacaoMercado.append(lista[pos + 15])
+                #     valor.append(lista[pos + 17])
+
+            if lista[pos + 7] == 'aus':
+                situacaoMercado.remove(lista[pos + 7])
+                valor.remove(lista[pos + 9])
+                situacaoMercado.append(lista[pos + 15])
+                valor.append(lista[pos + 17])
+                if lista[pos + 15] == 'kg':
+                    situacaoMercado.remove(lista[pos + 15])
+                    valor.remove(lista[pos + 17])
+                    situacaoMercado.append(lista[pos + 16])
+                    valor.append(lista[pos + 18])
+
             # print(lista[pos + 6])
 
             if lista[pos + 7] =='a':
@@ -367,7 +422,9 @@ cont = 0
 #     for teste in alo:
 #         print(teste)
 
-arquivos = sorted(glob(r'C:/Users/Leonardo Alves/Documents/Faculdade/TCC/minhaPastaTcc/Arquivos Tcc Leonardo/Londrina/DOISMILEDEZENOVE/eMaio/*.pdf'))
+arquivos = sorted(glob(r'C:/Users/Leonardo Alves/OneDrive - AP SOLUCOES DE GESTAO E TECNOLOGIA LTDA/Documentos/Faculdade'
+                       r'/TCC/minhaPastaTcc/CURITIBA/DOISMILEDEZESSETE/aJaneiro/*.pdf'))
+
 for pdf in arquivos:
     # print(pdf)
     lerArquivo(pdf)
